@@ -3,13 +3,19 @@ const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-app.use(cors()); // разрешаем запросы со всех доменов
+
+app.use(cors({
+  origin: 'https://samonbookss.github.io',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 app.use(express.json());
 
 app.post('/shorten', async (req, res) => {
   try {
     const { url } = req.body;
-    const apiKey = process.env.API_KEY; // достаём ключ из ENV
+    const apiKey = process.env.API_KEY;
 
     const response = await axios.post('https://api.clck.my/', { url }, {
       headers: {
@@ -20,12 +26,12 @@ app.post('/shorten', async (req, res) => {
 
     res.json(response.data);
   } catch (err) {
-    console.error('Ошибка при запросе к clck.my:', err.message);
-    res.status(err.response?.status || 500).json({ error: err.message });
+    console.error('Ошибка при запросе:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Proxy-сервер запущен на порту ${PORT}`);
+  console.log(`Сервер запущен на порту ${PORT}`);
 });
