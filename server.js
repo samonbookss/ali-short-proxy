@@ -4,6 +4,7 @@ const axios = require('axios');
 
 const app = express();
 
+// Разрешаем CORS только для нужного домена
 app.use(cors({
   origin: 'https://samonbookss.github.io',
   methods: ['GET', 'POST'],
@@ -12,6 +13,7 @@ app.use(cors({
 
 app.use(express.json());
 
+// Основной POST-роут для сокращения ссылок
 app.post('/shorten', async (req, res) => {
   try {
     const { url } = req.body;
@@ -29,6 +31,11 @@ app.post('/shorten', async (req, res) => {
     console.error('Ошибка при запросе:', err.message);
     res.status(500).json({ error: err.message });
   }
+});
+
+// Замаскированный "ping"-роут для UptimeRobot или cron-job
+app.get('/favicon-data', (req, res) => {
+  res.status(200).send('OK');
 });
 
 const PORT = process.env.PORT || 3000;
